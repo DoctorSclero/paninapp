@@ -1,27 +1,27 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
-	"pietroballarin.com/paninup-backend/internal/controllers"
-	"pietroballarin.com/paninup-backend/internal/db"
-	"pietroballarin.com/paninup-backend/internal/repositories"
+	"github.com/joho/godotenv"
+	"pietroballarin.com/paninup-backend/internal/database"
+	"pietroballarin.com/paninup-backend/internal/model"
 )
 
 func main() {
-	// Database initialization
-	db.InitDB()
-	defer db.CloseDB()
+	// Load environment variables
+	if err := godotenv.Load("../../.env"); err != nil {
+		log.Println("Warning: .env file not found")
+	}
 
-	// Repository initialization
-	userRepo := repositories.User{DB: db.DB}
+	// Connect to database
+	database.Connect()
 
-	// Controller initialization
-	userController := controllers.User{Repo: &userRepo}
+	// Migrations
+	database.DB.AutoMigrate(&model.User{})
 
 	// Server initialization
 	server := gin.Default()
-
-	server.POST("/users/register", userController.Register)
-
 	server.Run()
 }
