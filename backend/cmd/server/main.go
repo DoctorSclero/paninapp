@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
 	"pietroballarin.com/paninup-backend/internal/database"
-	"pietroballarin.com/paninup-backend/internal/model"
-	"pietroballarin.com/paninup-backend/internal/service"
+	"pietroballarin.com/paninup-backend/internal/user"
 )
 
 func main() {
@@ -20,17 +20,16 @@ func main() {
 	database.Connect()
 
 	// Migrations
-	database.DB.AutoMigrate(&model.User{})
+	database.DB.AutoMigrate(&user.User{})
 
 	// Server initialization
 	server := gin.Default()
 
 	// Service setup
-	user_service := service.NewUserService(database.DB)
+	userService := user.NewService(database.DB)
 
 	// Routes setup
-	server.POST("/user/register", user_service.Create)
-
+	server.POST("/users/register", userService.Create)
 	// Server listening
 	server.Run()
 }
