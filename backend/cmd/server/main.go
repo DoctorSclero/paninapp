@@ -29,7 +29,7 @@ func main() {
 	userService := user.NewService(database.DB)
 
 	// Routes setup
-	server.POST("/users/register", userService.Create)
+	server.POST("/users/register", userService.Register)
 	// Server listening
 	server.Run()
 }

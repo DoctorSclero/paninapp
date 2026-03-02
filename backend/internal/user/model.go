@@ -12,8 +12,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Email string `gorm:"unique;not null"`
-	Hash  string `gorm:"not null"`
+	Email string `json:"email" gorm:"unique;not null"`
+	Hash  string `json:"-" gorm:"not null"`
 }
 
 func NewUser(email, password string) (*User, error) {
