@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	"pietroballarin.com/paninup-backend/internal/database"
 	"pietroballarin.com/paninup-backend/internal/model"
+	"pietroballarin.com/paninup-backend/internal/service"
 )
 
 func main() {
@@ -23,5 +24,13 @@ func main() {
 
 	// Server initialization
 	server := gin.Default()
+
+	// Service setup
+	user_service := service.NewUserService(database.DB)
+
+	// Routes setup
+	server.POST("/user/register", user_service.Create)
+
+	// Server listening
 	server.Run()
 }

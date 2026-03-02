@@ -1,4 +1,4 @@
-package controller
+package service
 
 import (
 	"github.com/gin-gonic/gin"
@@ -6,8 +6,12 @@ import (
 	"pietroballarin.com/paninup-backend/internal/model"
 )
 
-type User struct {
+type UserService struct {
 	db *gorm.DB
+}
+
+func NewUserService(db *gorm.DB) *UserService {
+	return &UserService{db: db}
 }
 
 // User registration
@@ -17,7 +21,7 @@ type CreateUserRequest struct {
 	Password string `json:"password" binding:"required,min=8"`
 }
 
-func (u *User) Create(ctx *gin.Context) {
+func (u *UserService) Create(ctx *gin.Context) {
 	var create_request CreateUserRequest
 	// Checking request format
 	if err := ctx.ShouldBindJSON(&create_request); err != nil {
@@ -25,7 +29,7 @@ func (u *User) Create(ctx *gin.Context) {
 		return
 	}
 	// Creating user
-	user, err := model.NewUserFromEmailAndPassword(create_request.Email, create_request.Password)
+	user, err := model.NewUser(create_request.Email, create_request.Password)
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": err.Error()})
 		return
