@@ -3,6 +3,7 @@ package user
 import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"pietroballarin.com/paninup-backend/internal/types"
 )
 
 // User model. Fields are kept public to
@@ -12,18 +13,23 @@ import (
 
 type User struct {
 	gorm.Model
-	Email string `json:"email" gorm:"unique;not null"`
-	Hash  string `json:"-" gorm:"not null"`
+	Email string         `json:"email" gorm:"unique;not null"`
+	Hash  string         `json:"-" gorm:"not null"`
+	Role  types.UserRole `json:"role" gorm:"not null;default:'consumer'"`
 }
 
-func NewUser(email, password string) (*User, error) {
+func New(email, password string, role types.UserRole) (*User, error) {
 	// Bcrypt hashing of password
 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return nil, err
 	}
+	// Default to consumer if role is invalid
+	if role != types.RoleConsumer && role != types.RoleManager {
+		role = types.RoleConsumer
+	}
 	// Creating user
-	user := &User{Email: email, Hash: string(hash)}
+	user := &User{Email: email, Hash: string(hash), Role: role}
 	return user, nil
 }
 
